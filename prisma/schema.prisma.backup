@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Item {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  wcPrice     Float    // WC 價格（支援小數）
+  mesosValue  Int      // 楓幣價值
+  efficiency  Float    // 兌換效率 (mesosValue / wcPrice)
+  category    String?  // 道具類別
+  description String?  // 道具描述
+  lastUpdated DateTime @default(now()) @updatedAt
+  createdAt   DateTime @default(now())
+
+  // 套利機會關聯
+  arbitrageItem1 ArbitrageOpportunity[] @relation("ArbitrageItem1")
+  arbitrageItem2 ArbitrageOpportunity[] @relation("ArbitrageItem2")
+
+  @@map("items")
+}
+
+model ArbitrageOpportunity {
+  id         Int      @id @default(autoincrement())
+  item1Id    Int
+  item2Id    Int
+  profitRate Float    // 套利利潤率
+  priceDiff  Float    // WC 價格差異（支援小數）
+  efficiencyDiff Float // 效率差異
+  createdAt  DateTime @default(now())
+
+  item1 Item @relation("ArbitrageItem1", fields: [item1Id], references: [id], onDelete: Cascade)
+  item2 Item @relation("ArbitrageItem2", fields: [item2Id], references: [id], onDelete: Cascade)
+
+  @@unique([item1Id, item2Id])
+  @@map("arbitrage_opportunities")
+}
+
+model SyncLog {
+  id          Int      @id @default(autoincrement())
+  status      String   // SUCCESS, ERROR
+  message     String?
+  itemsCount  Int?     // 同步的道具數量
+  duration    Int?     // 同步耗時（毫秒）
+  isAutoSync  Boolean  @default(false) // 是否為自動同步
+  createdAt   DateTime @default(now())
+
+  @@map("sync_logs")
+}

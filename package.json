@@ -1,0 +1,53 @@
+{
+  "name": "maplestory-price-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "postinstall": "prisma generate",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "db:generate": "prisma generate",
+    "sync": "node scripts/sync-sheets-data.js",
+    "sync:auto": "node services/auto-sync-service.js",
+    "sync:manual": "node services/auto-sync-service.js --manual",
+    "sync:status": "node services/auto-sync-service.js --status",
+    "test:sheets": "node scripts/tests/test-google-sheets.js",
+    "setup:artale": "node scripts/data/add-artale-data.js",
+    "diagnostic": "node tools/sync-diagnostic.js",
+    "performance": "node tools/performance-test.js"
+  },
+  "dependencies": {
+    "next": "14.0.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "@prisma/client": "^5.7.0",
+    "prisma": "^5.7.0",
+    "googleapis": "^129.0.0",
+    "node-cron": "^3.0.3",
+    "@tanstack/react-query": "^5.8.0",
+    "recharts": "^2.8.0",
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0",
+    "class-variance-authority": "^0.7.0",
+    "lucide-react": "^0.294.0",
+    "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-dialog": "^1.0.5",
+    "date-fns": "^2.30.0"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.0.1",
+    "postcss": "^8",
+    "tailwindcss": "^3.3.0",
+    "tailwindcss-animate": "^1.0.7",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.0"
+  }
+}
