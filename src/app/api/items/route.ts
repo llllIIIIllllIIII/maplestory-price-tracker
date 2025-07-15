@@ -116,14 +116,18 @@ export async function GET(request: NextRequest) {
     }
 
     // 查詢資料
-    const [items, totalCount] = await Promise.all([
+    const [items, totalCount, lastUpdatedItem] = await Promise.all([
       prisma.item.findMany({
         where,
         orderBy,
         skip: filters.offset,
         take: filters.limit,
       }),
-      prisma.item.count({ where })
+      prisma.item.count({ where }),
+      prisma.item.findFirst({
+        orderBy: { lastUpdated: 'desc' },
+        select: { lastUpdated: true }
+      })
     ])
 
     // 獲取飄雪結晶的最新價格（動態預設值）
@@ -142,7 +146,8 @@ export async function GET(request: NextRequest) {
         limit: filters.limit,
         offset: filters.offset,
         hasMore: (filters.offset || 0) + (filters.limit || 0) < totalCount
-      }
+      },
+      lastUpdated: lastUpdatedItem?.lastUpdated || new Date()
     }
 
     // 快取結果（只快取前50筆的基本查詢）

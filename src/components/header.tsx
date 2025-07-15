@@ -1,6 +1,53 @@
 'use client'
 
+import { useState, useEffect } from 'react'
+
 export function Header() {
+  const [lastUpdated, setLastUpdated] = useState<string>('載入中...')
+
+  useEffect(() => {
+    const fetchLastUpdated = async () => {
+      try {
+        const response = await fetch('/api/items?limit=1')
+        const result = await response.json()
+        
+        if (result.success && result.data.lastUpdated) {
+          const updateTime = new Date(result.data.lastUpdated)
+          setLastUpdated(formatTime(updateTime))
+        }
+      } catch (error) {
+        console.error('獲取最後更新時間失敗:', error)
+        setLastUpdated('載入失敗')
+      }
+    }
+
+    fetchLastUpdated()
+    // 每分鐘更新一次顯示的時間
+    const interval = setInterval(fetchLastUpdated, 60000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const formatTime = (date: Date): string => {
+    const now = new Date()
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / 60000)
+    
+    if (diffInMinutes < 1) {
+      return '剛剛'
+    } else if (diffInMinutes < 60) {
+      return `${diffInMinutes} 分鐘前`
+    } else if (diffInMinutes < 1440) {
+      const hours = Math.floor(diffInMinutes / 60)
+      return `${hours} 小時前`
+    } else {
+      return date.toLocaleDateString('zh-TW', {
+        month: 'numeric',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    }
+  }
+
   return (
     <header className="bg-white border-b-2 border-orange-200 shadow-sm">
       <div className="container mx-auto px-4 py-6">
@@ -17,12 +64,9 @@ export function Header() {
             </div>
           </div>
           
-          <div className="flex items-center space-x-4">
-            <SyncButton />
-            <div className="text-right text-sm text-gray-500">
-              <p>資料每小時更新</p>
-              <p>上次更新：剛剛</p>
-            </div>
+          <div className="text-right text-sm text-gray-500">
+            <p>資料自動更新</p>
+            <p>上次更新：{lastUpdated}</p>
           </div>
         </div>
       </div>
@@ -30,29 +74,3 @@ export function Header() {
   )
 }
 
-function SyncButton() {
-  const handleSync = async () => {
-    try {
-      const response = await fetch('/api/sync', { method: 'POST' })
-      const result = await response.json()
-      
-      if (result.success) {
-        alert('資料同步成功！')
-        window.location.reload()
-      } else {
-        alert(`同步失敗: ${result.message}`)
-      }
-    } catch (error) {
-      alert('同步失敗，請稍後再試')
-    }
-  }
-
-  return (
-    <button
-      onClick={handleSync}
-      className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-    >
-      🔄 手動同步
-    </button>
-  )
-}
