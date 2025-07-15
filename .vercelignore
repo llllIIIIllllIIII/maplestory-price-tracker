@@ -1,0 +1,39 @@
+# Vercel 部署時排除的檔案和資料夾
+
+# 開發文件
+docs/
+scripts/
+*.md
+!README.md
+
+# 範例檔案
+.env.example
+.env.production.example
+.env.vercel.example
+
+# 測試檔案
+DEPLOY_TEST.md
+DEPLOYMENT_SUCCESS.md
+
+# 設定腳本
+github-commands.sh
+*.sh
+
+# 開發工具
+.vscode/
+.idea/
+
+# 備份檔案
+*.backup
+*.bak
+
+# 暫存檔案
+*.tmp
+*.temp
+
+# 日誌檔案
+logs/
+*.log
+
+# 本地配置
+.env.local
