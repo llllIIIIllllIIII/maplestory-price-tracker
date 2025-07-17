@@ -19,7 +19,7 @@ export class GoogleSheetsService {
 
   /**
    * 初始化認證方式
-   * 優先順序: 環境變數服務帳戶 > 檔案路徑服務帳戶 > API 金鑰
+   * 優先順序: API 金鑰 > 環境變數服務帳戶 > 檔案路徑服務帳戶
    */
   private initializeAuth() {
     const apiKey = process.env.GOOGLE_SHEETS_API_KEY
@@ -27,7 +27,15 @@ export class GoogleSheetsService {
     const serviceAccountEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL
     const privateKey = process.env.GOOGLE_PRIVATE_KEY
     
-    // 優先使用環境變數方式的服務帳戶（適用於 Vercel 部署）
+    // 在 Vercel 環境中優先使用 API 金鑰（避免 JWT 問題）
+    if (apiKey) {
+      this.auth = apiKey
+      this.authType = 'api_key'
+      console.log('✓ 使用 API 金鑰認證')
+      return
+    }
+    
+    // 優先使用環境變數方式的服務帳戶（適用於本地開發）
     if (serviceAccountEmail && privateKey) {
       try {
         this.auth = new google.auth.GoogleAuth({
@@ -61,14 +69,6 @@ export class GoogleSheetsService {
       } catch (error) {
         console.error('檔案路徑服務帳戶認證初始化失敗:', error)
       }
-    }
-    
-    // 最後使用 API 金鑰
-    if (apiKey) {
-      this.auth = apiKey
-      this.authType = 'api_key'
-      console.log('✓ 使用 API 金鑰認證')
-      return
     }
     
     if (this.authType === 'none') {
