@@ -2,6 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { QueryProvider } from '@/lib/query-provider'
+import Script from 'next/script'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,6 +19,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-TW">
+      <head>
+        {/* Google AdSense */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7994991319464017"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      </head>
       <body className={inter.className}>
         <QueryProvider>
           {children}

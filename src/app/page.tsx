@@ -4,6 +4,7 @@ import { EfficiencyChart } from '@/components/efficiency-chart'
 import { StatsCards } from '@/components/stats-cards'
 import { Header } from '@/components/header'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import AdSense from '@/components/AdSense'
 
 export default function HomePage() {
   return (
@@ -16,6 +17,15 @@ export default function HomePage() {
           <StatsCards />
         </Suspense>
 
+        {/* 頂部廣告 */}
+        <div className="my-8 flex justify-center">
+          <AdSense
+            adSlot="1234567890"
+            adFormat="auto"
+            style={{ display: 'block', width: '100%', maxWidth: '728px', height: '90px' }}
+          />
+        </div>
+
         {/* 效率圖表 */}
         <section className="mb-8">
           <h2 className="text-2xl font-bold mb-4 text-gray-800">
@@ -25,6 +35,15 @@ export default function HomePage() {
             <EfficiencyChart />
           </Suspense>
         </section>
+
+        {/* 中間廣告 */}
+        <div className="my-8 flex justify-center">
+          <AdSense
+            adSlot="0987654321"
+            adFormat="auto"
+            style={{ display: 'block', width: '100%', maxWidth: '300px', height: '250px' }}
+          />
+        </div>
 
         {/* 道具列表 */}
         <section>
