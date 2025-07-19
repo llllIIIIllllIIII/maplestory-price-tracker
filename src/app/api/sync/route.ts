@@ -47,12 +47,36 @@ export async function POST() {
           continue
         }
 
+        // 特殊處理：統一雪花相關道具的名稱
+        let itemName = row.itemName
+        if (itemName.includes('雪花') || itemName.includes('飄雪結晶') || itemName.includes('Snowflakes')) {
+          // 檢查是否已有雪花相關道具
+          const existingSnowflake = await prisma.item.findFirst({
+            where: {
+              OR: [
+                { name: { contains: '雪花' } },
+                { name: { contains: '飄雪結晶' } },
+                { name: { contains: 'Snowflakes' } }
+              ]
+            }
+          })
+
+          if (existingSnowflake) {
+            // 使用現有的名稱，避免重複
+            itemName = existingSnowflake.name
+            console.log(`統一雪花道具名稱: ${row.itemName} -> ${itemName}`)
+          } else {
+            // 統一使用標準名稱
+            itemName = '飄雪結晶 (Snowflakes Box)'
+          }
+        }
+
         // 計算效率
         const efficiency = calculateEfficiency(row.mesosValue, row.wcPrice)
 
         // 更新或建立道具記錄
         await prisma.item.upsert({
-          where: { name: row.itemName },
+          where: { name: itemName },
           update: {
             wcPrice: row.wcPrice,
             mesosValue: row.mesosValue,
@@ -62,7 +86,7 @@ export async function POST() {
             lastUpdated: new Date()
           },
           create: {
-            name: row.itemName,
+            name: itemName,
             wcPrice: row.wcPrice,
             mesosValue: row.mesosValue,
             efficiency,

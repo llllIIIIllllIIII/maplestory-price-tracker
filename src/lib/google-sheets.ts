@@ -285,11 +285,20 @@ export class GoogleSheetsService {
         }
       }
 
-      // 確保雪花資料存在
-      const snowflakeItem = this.createSnowflakeItem(snowflakeRate)
-      const existingSnowflake = items.find(item => item.itemName.includes('雪花'))
+      // 確保雪花資料存在 - 檢查是否已有飄雪結晶相關道具
+      const existingSnowflake = items.find(item => 
+        item.itemName.includes('雪花') || 
+        item.itemName.includes('飄雪結晶') || 
+        item.itemName.includes('Snowflakes')
+      )
+      
       if (!existingSnowflake) {
+        // 只有在完全找不到雪花相關道具時才創建
+        const snowflakeItem = this.createSnowflakeItem(snowflakeRate)
         items.unshift(snowflakeItem)
+        console.log('創建基礎雪花道具資料')
+      } else {
+        console.log(`找到現有雪花道具: ${existingSnowflake.itemName}`)
       }
 
       console.log(`成功解析 ${items.length} 筆 Artale 道具資料`)

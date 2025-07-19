@@ -1,9 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 
 export function Header() {
   const [lastUpdated, setLastUpdated] = useState<string>('載入中...')
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const fetchLastUpdated = async () => {
@@ -50,25 +52,83 @@ export function Header() {
 
   return (
     <header className="bg-white border-b-2 border-orange-200 shadow-sm">
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+      <div className="container mx-auto px-4 py-4">
+        {/* 主要標題區 */}
+        <div className="flex items-center justify-between mb-4">
+          <Link href="/" className="flex items-center space-x-4 hover:opacity-80 transition-opacity">
             <div className="text-3xl">🍁</div>
             <div>
               <h1 className="text-2xl font-bold maple-text">
                 楓之谷物價追蹤器
               </h1>
               <p className="text-gray-600 text-sm">
-                實時追蹤現金道具與楓幣兌換效率
+                Artale 專用價格分析工具
               </p>
             </div>
-          </div>
+          </Link>
           
-          <div className="text-right text-sm text-gray-500">
-            <p>資料自動更新</p>
+          <div className="hidden md:block text-right text-sm text-gray-500">
+            <p>資料每日更新</p>
             <p>上次更新：{lastUpdated}</p>
           </div>
+
+          {/* 手機版菜單按鈕 */}
+          <button
+            className="md:hidden p-2 rounded-md hover:bg-gray-100"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
         </div>
+
+        {/* 導航菜單 */}
+        <nav className={`${isMobileMenuOpen ? 'block' : 'hidden'} md:block`}>
+          <div className="flex flex-col md:flex-row md:items-center md:space-x-8 space-y-2 md:space-y-0">
+            <Link 
+              href="/" 
+              className="text-gray-700 hover:text-orange-600 font-medium transition-colors px-2 py-1 rounded"
+            >
+              📊 價格分析
+            </Link>
+            <Link 
+              href="/guide" 
+              className="text-gray-700 hover:text-orange-600 font-medium transition-colors px-2 py-1 rounded"
+            >
+              📖 使用指南
+            </Link>
+            <Link 
+              href="/about" 
+              className="text-gray-700 hover:text-orange-600 font-medium transition-colors px-2 py-1 rounded"
+            >
+              ℹ️ 關於我們
+            </Link>
+            <Link 
+              href="/faq" 
+              className="text-gray-700 hover:text-orange-600 font-medium transition-colors px-2 py-1 rounded"
+            >
+              ❓ 常見問題
+            </Link>
+            <Link 
+              href="/terms" 
+              className="text-gray-700 hover:text-orange-600 font-medium transition-colors px-2 py-1 rounded"
+            >
+              📋 使用條款
+            </Link>
+            <Link 
+              href="/privacy" 
+              className="text-gray-700 hover:text-orange-600 font-medium transition-colors px-2 py-1 rounded"
+            >
+              🔒 隱私政策
+            </Link>
+          </div>
+          
+          {/* 手機版更新時間 */}
+          <div className="md:hidden mt-4 pt-4 border-t text-sm text-gray-500 text-center">
+            <p>資料每日更新 | 上次更新：{lastUpdated}</p>
+          </div>
+        </nav>
       </div>
     </header>
   )
