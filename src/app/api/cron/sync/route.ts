@@ -41,17 +41,44 @@ export async function GET(request: NextRequest) {
 
     // 處理每筆資料
     for (const row of googleSheetData) {
+      let itemName = row.itemName; // 宣告在循環開始
+      
       try {
+        // 驗證資料格式
         if (!validateItemData(row)) {
+          console.warn(`跳過無效資料: ${JSON.stringify(row)}`)
           errorCount++;
           continue;
         }
 
-        // 計算效率
-        const efficiency = calculateEfficiency(row.wcPrice, row.mesosValue);
+        // 特殊處理：統一雪花相關道具的名稱
+        if (itemName.includes('雪花') || itemName.includes('飄雪結晶') || itemName.includes('Snowflakes')) {
+          // 檢查是否已有雪花相關道具
+          const existingSnowflake = await prisma.item.findFirst({
+            where: {
+              OR: [
+                { name: { contains: '雪花' } },
+                { name: { contains: '飄雪結晶' } },
+                { name: { contains: 'Snowflakes' } }
+              ]
+            }
+          })
+
+          if (existingSnowflake) {
+            // 使用現有的名稱，避免重複
+            itemName = existingSnowflake.name
+            console.log(`統一雪花道具名稱: ${row.itemName} -> ${itemName}`)
+          } else {
+            // 統一使用標準名稱
+            itemName = '飄雪結晶 (Snowflakes Box)'
+          }
+        }
+
+        // 計算效率 - 注意參數順序：mesosValue 在前，wcPrice 在後
+        const efficiency = calculateEfficiency(row.mesosValue, row.wcPrice);
 
         await prisma.item.upsert({
-          where: { name: row.itemName },
+          where: { name: itemName },
           update: {
             wcPrice: row.wcPrice,
             mesosValue: row.mesosValue,
@@ -61,7 +88,7 @@ export async function GET(request: NextRequest) {
             lastUpdated: new Date()
           },
           create: {
-            name: row.itemName,
+            name: itemName,
             category: row.category || 'other',
             wcPrice: row.wcPrice,
             mesosValue: row.mesosValue,
@@ -72,7 +99,7 @@ export async function GET(request: NextRequest) {
 
         successCount++;
       } catch (error) {
-        console.error(`處理道具 ${row.itemName} 時發生錯誤:`, error);
+        console.error(`處理道具 ${itemName} 時發生錯誤:`, error);
         errorCount++;
       }
     }
