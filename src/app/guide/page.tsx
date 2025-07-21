@@ -1,4 +1,5 @@
 import { Header } from '@/components/header'
+import Footer from '@/components/Footer'
 import { PageLayout } from '@/components/page-layout'
 
 export default function GuidePage() {
@@ -158,6 +159,7 @@ export default function GuidePage() {
           </section>
         </div>
       </PageLayout>
+      <Footer />
     </>
   )
 }

@@ -1,5 +1,6 @@
 import { Header } from '@/components/header'
 import { PageLayout } from '@/components/page-layout'
+import Footer from '@/components/Footer'
 
 export default function AboutPage() {
   return (
@@ -203,6 +204,7 @@ export default function AboutPage() {
           </section>
         </div>
       </PageLayout>
+      <Footer />
     </>
   )
 }

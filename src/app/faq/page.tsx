@@ -1,4 +1,5 @@
 import { Header } from '@/components/header'
+import Footer from '@/components/Footer'
 import { PageLayout } from '@/components/page-layout'
 
 export default function FAQPage() {
@@ -242,6 +243,7 @@ export default function FAQPage() {
           </section>
         </div>
       </PageLayout>
+      <Footer />
     </>
   )
 }

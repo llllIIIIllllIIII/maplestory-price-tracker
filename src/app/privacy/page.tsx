@@ -1,4 +1,5 @@
 import { Header } from '@/components/header'
+import Footer from '@/components/Footer'
 import { PageLayout } from '@/components/page-layout'
 
 export default function PrivacyPage() {
@@ -463,6 +464,7 @@ export default function PrivacyPage() {
           </section>
         </div>
       </PageLayout>
+      <Footer />
     </>
   )
 }

@@ -1,4 +1,5 @@
 import { Header } from '@/components/header'
+import Footer from '@/components/Footer'
 import { PageLayout } from '@/components/page-layout'
 
 export default function TermsPage() {
@@ -280,6 +281,7 @@ export default function TermsPage() {
           </section>
         </div>
       </PageLayout>
+      <Footer />
     </>
   )
 }
