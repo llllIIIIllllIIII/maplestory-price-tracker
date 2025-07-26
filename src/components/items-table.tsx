@@ -172,9 +172,10 @@ export function ItemsTable() {
                   </div>
                   <div className="text-xs mt-1">
                     {(() => {
-                      // 直接計算套利潛力，避免類型問題
+                      // 動態獲取飄雪結晶的效率作為基準
+                      const snowflakeItem = items.find(item => item.name.includes('飄雪結晶'))
+                      const snowflakeEfficiency = snowflakeItem?.efficiency || 2.2 // 預設值
                       const itemEfficiency = item.efficiency
-                      const snowflakeEfficiency = 1.467 // 飄雪結晶的效率
                       const arbitragePotential = ((itemEfficiency - snowflakeEfficiency) / snowflakeEfficiency) * 100
                       
                       if (item.name.includes('飄雪結晶')) {
