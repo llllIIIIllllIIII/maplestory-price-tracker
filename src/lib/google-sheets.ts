@@ -302,7 +302,20 @@ export class GoogleSheetsService {
       }
 
       console.log(`成功解析 ${items.length} 筆 Artale 道具資料`)
-      return items
+      
+      // 暫時過濾掉轉蛋券 - 遊戲中目前沒有此道具
+      // TODO: 當遊戲中有轉蛋券時，移除此過濾條件
+      const filteredItems = items.filter(item => 
+        !item.itemName.includes('轉蛋券') && 
+        !item.itemName.includes('轉蛋卷') && 
+        !item.itemName.includes('Gachapon')
+      )
+      
+      if (filteredItems.length !== items.length) {
+        console.log(`已過濾 ${items.length - filteredItems.length} 個轉蛋券相關道具`)
+      }
+      
+      return filteredItems
 
     } catch (error) {
       console.error('獲取 Artale 道具資料失敗:', error)
